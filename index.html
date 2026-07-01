@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PromptGallery — AI Image Prompts</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+        <span class="logo-text">Prompt<span class="accent">Gallery</span></span>
+      </div>
+      <nav class="nav" id="nav">
+        <a href="#gallery" class="nav-link">Gallery</a>
+        <a href="#categories" class="nav-link">Categories</a>
+        <a href="admin.html" class="nav-link admin-btn"><i class="fa-solid fa-lock"></i> Admin</a>
+      </nav>
+      <button class="hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">✦ AI Prompt Gallery</div>
+      <h1 class="hero-title">Discover & Copy<br/><span class="gradient-text">AI Image Prompts</span></h1>
+      <p class="hero-sub">Browse stunning AI-generated images with ready-to-use prompts. One click to copy, instantly create.</p>
+      <div class="hero-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Search prompts, categories..." autocomplete="off" />
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span id="totalImages">0</span><small>Images</small></div>
+      <div class="stat"><span>8</span><small>Categories</small></div>
+      <div class="stat"><span id="totalCopied">0</span><small>Prompts Copied</small></div>
+    </div>
+  </section>
+
+  <!-- Category Tabs -->
+  <section class="categories" id="categories">
+    <div class="container">
+      <div class="cat-tabs" id="catTabs">
+        <button class="cat-tab active" data-cat="all"><i class="fa-solid fa-border-all"></i> All</button>
+        <button class="cat-tab" data-cat="family"><i class="fa-solid fa-house-chimney-heart"></i> Family</button>
+        <button class="cat-tab" data-cat="girl"><i class="fa-solid fa-venus"></i> Girl</button>
+        <button class="cat-tab" data-cat="boy"><i class="fa-solid fa-mars"></i> Boy</button>
+        <button class="cat-tab" data-cat="kids"><i class="fa-solid fa-child"></i> Kids</button>
+        <button class="cat-tab" data-cat="birthday"><i class="fa-solid fa-cake-candles"></i> Birthday</button>
+        <button class="cat-tab" data-cat="wedding"><i class="fa-solid fa-rings-wedding"></i> Wedding</button>
+        <button class="cat-tab" data-cat="invitation"><i class="fa-solid fa-envelope-open-text"></i> Invitations</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Grid -->
+  <main class="gallery-section" id="gallery">
+    <div class="container">
+      <div class="gallery-grid" id="galleryGrid">
+        <!-- Cards injected by JS -->
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none">
+        <i class="fa-solid fa-image"></i>
+        <p>No images found. Try a different search or category.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"><i class="fa-solid fa-check-circle"></i> <span id="toastMsg">Prompt copied!</span></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="logo-text">Prompt<span class="accent">Gallery</span></span>
+      <p>Built with ✦ for AI creators. <a href="admin.html">Admin Panel</a></p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
