@@ -1,68 +1,57 @@
-# PromptGallery ✦
+<div align="center">
 
-A modern futuristic gallery website for AI-generated images with copyable prompts.
+# ✦ PromptGallery
 
-**Live Site:** https://lalithchary.github.io/recreate
+### Discover beautiful AI-generated images and copy their prompts instantly
 
----
+[![Live Site](https://img.shields.io/badge/🌐_Live_Site-Visit_Gallery-7c3aed?style=for-the-badge)](https://lalithchary.github.io/recreate)
+[![Categories](https://img.shields.io/badge/📂_Categories-8_Available-06b6d4?style=for-the-badge)](#)
+[![License](https://img.shields.io/badge/License-MIT-f472b6?style=for-the-badge)](#)
 
-## Features
-
-- 🖼️ Futuristic dark gallery with animated grid background
-- 📋 One-click prompt copy (full prompt copied, preview shown)
-- 🗂️ Categories: Family, Girl, Boy, Kids, Birthday, Wedding, Invitations
-- 🔍 Search across titles, prompts, and tags
-- 🔐 Admin panel (password protected) to add/edit/delete images
-- 📤 Export gallery data as JSON backup
-- 💾 Data stored in localStorage (no backend needed)
+</div>
 
 ---
 
-## Admin Access
+## ✨ What is PromptGallery?
 
-Go to `/admin.html` — default password is `admin123`.
-
-**To change the password:** edit line 10 of `js/admin.js`:
-```js
-const ADMIN_PASSWORD = 'your_new_password';
-```
+**PromptGallery** is a curated collection of AI-generated images across various life moments — from family portraits to wedding memories, birthday celebrations to creative portraits. Every image comes with a ready-to-use AI prompt that you can **copy with one click** and use in your own image generation tools.
 
 ---
 
-## How to Deploy to GitHub Pages
+## 🖼️ Browse Categories
 
-1. Push this repo to `https://github.com/lalithchary/recreate`
-2. Go to repo **Settings → Pages**
-3. Set source to **Deploy from branch → main → / (root)**
-4. Your site will be live at `https://lalithchary.github.io/recreate`
-
----
-
-## Adding Images (Admin Panel)
-
-1. Visit `your-site/admin.html`
-2. Login with your password
-3. Click **Add Image**
-4. Fill in:
-   - **Title** — display name
-   - **Category** — select from dropdown
-   - **Image URL** — direct link to image (upload to [imgbb.com](https://imgbb.com) for free hosting)
-   - **Full AI Prompt** — paste the complete prompt (visitors see preview, copy gets the full text)
-   - **Tags** — optional, comma separated
+| Category | Description |
+|----------|-------------|
+| 👨‍👩‍👧‍👦 **Family** | Warm family moments and portraits |
+| 👧 **Girl** | Creative and artistic girl portraits |
+| 👦 **Boy** | Adventure and lifestyle boy portraits |
+| 🧒 **Kids** | Joyful and playful children scenes |
+| 🎂 **Birthday** | Festive birthday celebrations |
+| 💍 **Wedding** | Elegant wedding photography styles |
+| 💌 **Invitations** | Beautiful invitation design prompts |
 
 ---
 
-## File Structure
+## 📋 How to Use
 
-```
-├── index.html          — Main gallery page
-├── admin.html          — Admin panel
-├── css/
-│   ├── style.css       — Main styles
-│   └── admin.css       — Admin-specific styles
-├── js/
-│   ├── data.js         — Data layer (localStorage)
-│   ├── app.js          — Gallery logic
-│   └── admin.js        — Admin panel logic
-└── README.md
-```
+1. **Visit** the [live gallery](https://lalithchary.github.io/recreate)
+2. **Browse** images by category or search by keyword
+3. **Click the Copy button** under any image
+4. **Paste** the prompt into your AI image generator (Stable Diffusion, Midjourney, etc.)
+5. Generate your own stunning images!
+
+---
+
+## 🚀 Features
+
+- 🔍 Real-time search across all images and prompts
+- 📋 One-click full prompt copy (truncated preview shown, full text copied)
+- 🗂️ Category filters for easy browsing
+- 📱 Fully responsive — works on mobile, tablet, and desktop
+- ⚡ Fast and lightweight — no loading times
+
+---
+
+<div align="center">
+  <sub>Made with ✦ for AI creators everywhere</sub>
+</div>

@@ -3,125 +3,142 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Panel — PromptGallery</title>
+  <title>Admin — PromptGallery</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/admin.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body class="admin-body">
 
-  <div class="bg-grid"></div>
-  <div class="bg-glow glow-1"></div>
-  <div class="bg-glow glow-2"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
 
-  <!-- Login Gate -->
-  <div class="login-overlay" id="loginOverlay">
-    <div class="login-box glass">
-      <div class="login-logo">
-        <i class="fa-solid fa-shield-halved"></i>
-        <span>Admin Access</span>
+  <!-- LOGIN -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-top">
+        <div class="login-logo-icon">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h2>Admin Access</h2>
+        <p>Sign in to manage your gallery</p>
       </div>
-      <p class="login-sub">Enter your password to manage the gallery</p>
-      <div class="login-field">
-        <i class="fa-solid fa-lock"></i>
-        <input type="password" id="passwordInput" placeholder="Admin password" />
+      <div class="login-body">
+        <div class="field-wrap" id="loginFieldWrap">
+          <i class="fa-solid fa-lock field-icon"></i>
+          <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="current-password" />
+          <button class="field-eye" id="toggleEye" type="button" tabindex="-1"><i class="fa-solid fa-eye"></i></button>
+        </div>
+        <button class="btn-primary full" id="loginBtn">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign In
+        </button>
       </div>
-      <button class="btn-primary full" id="loginBtn"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
-      <p class="login-hint">Default password: <code>admin123</code> — change it in <code>js/admin.js</code></p>
     </div>
   </div>
 
-  <!-- Admin Panel -->
-  <div class="admin-wrap" id="adminWrap" style="display:none">
+  <!-- ADMIN PANEL -->
+  <div class="admin-layout" id="adminLayout" style="display:none">
 
     <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        <span>Prompt<span class="accent">Gallery</span></span>
+    <aside class="aside" id="aside">
+      <div class="aside-logo">
+        <div class="logo-icon-wrap sm"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        <span class="logo-text">Prompt<span class="gradient-text">Gallery</span></span>
       </div>
-      <nav class="sidebar-nav">
-        <a href="#" class="s-link active" data-panel="add"><i class="fa-solid fa-plus-circle"></i> Add Image</a>
-        <a href="#" class="s-link" data-panel="manage"><i class="fa-solid fa-images"></i> Manage Gallery</a>
-        <a href="index.html" class="s-link" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Site</a>
-        <a href="#" class="s-link logout" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      <nav class="aside-nav">
+        <a href="#" class="aside-link active" data-panel="add">
+          <span class="aside-link-icon"><i class="fa-solid fa-plus"></i></span>
+          <span>Add Image</span>
+        </a>
+        <a href="#" class="aside-link" data-panel="manage">
+          <span class="aside-link-icon"><i class="fa-solid fa-images"></i></span>
+          <span>Manage</span>
+        </a>
+        <a href="index.html" class="aside-link ext" target="_blank">
+          <span class="aside-link-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+          <span>View Site</span>
+        </a>
       </nav>
-      <div class="sidebar-stats">
-        <div class="s-stat"><span id="sTotal">0</span><small>Total</small></div>
-        <div class="s-stat"><span id="sPublished">0</span><small>Published</small></div>
+      <div class="aside-stats">
+        <div class="aside-stat">
+          <span id="sTotalCount">0</span>
+          <small>Total Images</small>
+        </div>
       </div>
+      <button class="aside-logout" id="logoutBtn">
+        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+      </button>
     </aside>
 
-    <!-- Main Content -->
+    <!-- Main -->
     <main class="admin-main">
 
-      <!-- Add Image Panel -->
-      <div class="panel active" id="panel-add">
-        <div class="panel-header">
-          <h2><i class="fa-solid fa-plus-circle"></i> Add New Image</h2>
-          <p>Upload an image and paste your AI prompt below</p>
+      <!-- ADD PANEL -->
+      <section class="a-panel active" id="panel-add">
+        <div class="a-panel-head">
+          <h1><i class="fa-solid fa-plus-circle"></i> Add New Image</h1>
+          <p>Add an image and its AI prompt to the gallery</p>
         </div>
-        <div class="add-form glass">
-          <div class="form-row two-col">
-            <div class="form-group">
+        <div class="a-form">
+          <div class="a-form-grid">
+            <div class="a-field">
               <label>Title <span class="req">*</span></label>
               <input type="text" id="imgTitle" placeholder="e.g. Dreamy Wedding Portrait" />
             </div>
-            <div class="form-group">
+            <div class="a-field">
               <label>Category <span class="req">*</span></label>
               <select id="imgCategory">
-                <option value="">Select category...</option>
-                <option value="family">Family</option>
-                <option value="girl">Girl</option>
-                <option value="boy">Boy</option>
-                <option value="kids">Kids</option>
-                <option value="birthday">Birthday</option>
-                <option value="wedding">Wedding</option>
-                <option value="invitation">Invitation</option>
+                <option value="">Select category…</option>
+                <option value="family">👨‍👩‍👧‍👦 Family</option>
+                <option value="girl">👧 Girl</option>
+                <option value="boy">👦 Boy</option>
+                <option value="kids">🧒 Kids</option>
+                <option value="birthday">🎂 Birthday</option>
+                <option value="wedding">💍 Wedding</option>
+                <option value="invitation">💌 Invitation</option>
               </select>
             </div>
           </div>
-
-          <div class="form-group">
+          <div class="a-field">
             <label>Image URL <span class="req">*</span></label>
-            <input type="url" id="imgUrl" placeholder="https://example.com/image.jpg or use a direct image link" />
-            <small>Use a direct image link (Imgur, GitHub raw, etc.) or upload to a free host like <a href="https://imgbb.com" target="_blank">imgbb.com</a></small>
+            <div class="url-row">
+              <input type="url" id="imgUrl" placeholder="https://…direct image link…" />
+              <button class="btn-outline icon-btn" id="previewBtn" title="Preview"><i class="fa-solid fa-eye"></i></button>
+            </div>
+            <p class="field-hint">Use a direct image URL. Free hosting: <a href="https://imgbb.com" target="_blank">imgbb.com</a> or <a href="https://imgur.com" target="_blank">imgur.com</a></p>
           </div>
-
-          <!-- Image Preview -->
-          <div class="img-preview-wrap" id="imgPreviewWrap" style="display:none">
+          <div class="img-preview-box" id="imgPreviewBox" style="display:none">
             <img id="imgPreview" src="" alt="Preview" />
           </div>
-          <button class="btn-outline" id="previewBtn"><i class="fa-solid fa-eye"></i> Preview Image</button>
-
-          <div class="form-group">
+          <div class="a-field">
             <label>Full AI Prompt <span class="req">*</span></label>
-            <textarea id="imgPrompt" rows="5" placeholder="Paste your full AI prompt here. Visitors will see a truncated version but copy the full prompt..."></textarea>
-            <small id="promptCharCount">0 characters</small>
+            <textarea id="imgPrompt" rows="6" placeholder="Paste your complete AI prompt here. Visitors will see a short preview but the Copy button copies this entire text…"></textarea>
+            <div class="field-foot"><span id="charCount">0</span> characters</div>
           </div>
-
-          <div class="form-group">
+          <div class="a-field">
             <label>Tags <span class="opt">(optional)</span></label>
-            <input type="text" id="imgTags" placeholder="e.g. portrait, cinematic, sunset (comma separated)" />
+            <input type="text" id="imgTags" placeholder="portrait, cinematic, golden hour (comma separated)" />
           </div>
-
-          <div class="form-actions">
-            <button class="btn-outline" id="clearFormBtn"><i class="fa-solid fa-xmark"></i> Clear</button>
-            <button class="btn-primary" id="saveImageBtn"><i class="fa-solid fa-floppy-disk"></i> Save to Gallery</button>
+          <div class="a-form-footer">
+            <button class="btn-outline" id="clearBtn"><i class="fa-solid fa-xmark"></i> Clear</button>
+            <button class="btn-primary" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Save to Gallery</button>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Manage Panel -->
-      <div class="panel" id="panel-manage">
-        <div class="panel-header">
-          <h2><i class="fa-solid fa-images"></i> Manage Gallery</h2>
-          <p>Edit or delete existing images</p>
+      <!-- MANAGE PANEL -->
+      <section class="a-panel" id="panel-manage">
+        <div class="a-panel-head">
+          <h1><i class="fa-solid fa-images"></i> Manage Gallery</h1>
+          <p>Edit or remove images from your gallery</p>
         </div>
-        <div class="manage-toolbar">
-          <input type="text" id="manageSearch" placeholder="Search gallery..." />
-          <select id="manageFilter">
+        <div class="manage-bar">
+          <div class="manage-search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="mSearch" placeholder="Search gallery…" />
+          </div>
+          <select id="mFilter">
             <option value="all">All Categories</option>
             <option value="family">Family</option>
             <option value="girl">Girl</option>
@@ -131,69 +148,57 @@
             <option value="wedding">Wedding</option>
             <option value="invitation">Invitation</option>
           </select>
-          <button class="btn-outline" id="exportBtn"><i class="fa-solid fa-download"></i> Export JSON</button>
+          <button class="btn-outline" id="exportBtn"><i class="fa-solid fa-download"></i> Export</button>
         </div>
-        <div class="manage-grid" id="manageGrid">
-          <!-- Items injected by JS -->
-        </div>
+        <div class="manage-grid" id="manageGrid"></div>
         <div class="empty-state" id="manageEmpty" style="display:none">
-          <i class="fa-solid fa-image"></i>
-          <p>No images yet. Add some from the "Add Image" panel.</p>
+          <div class="empty-icon"><i class="fa-solid fa-image"></i></div>
+          <h3>No images yet</h3>
+          <p>Add your first image from the Add Image panel.</p>
         </div>
-      </div>
+      </section>
 
     </main>
   </div>
 
-  <!-- Edit Modal -->
-  <div class="modal-overlay" id="editModal" style="display:none">
-    <div class="modal glass">
-      <div class="modal-header">
+  <!-- EDIT MODAL -->
+  <div class="modal-bg" id="editModalBg" style="display:none">
+    <div class="modal-card" id="editModal">
+      <div class="modal-head">
         <h3><i class="fa-solid fa-pen-to-square"></i> Edit Image</h3>
-        <button class="modal-close" id="closeModal"><i class="fa-solid fa-xmark"></i></button>
+        <button class="modal-x" id="closeModal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="editId" />
-        <div class="form-row two-col">
-          <div class="form-group">
-            <label>Title</label>
-            <input type="text" id="editTitle" />
-          </div>
-          <div class="form-group">
-            <label>Category</label>
-            <select id="editCategory">
-              <option value="family">Family</option>
-              <option value="girl">Girl</option>
-              <option value="boy">Boy</option>
-              <option value="kids">Kids</option>
-              <option value="birthday">Birthday</option>
-              <option value="wedding">Wedding</option>
+        <div class="a-form-grid">
+          <div class="a-field"><label>Title</label><input type="text" id="editTitle" /></div>
+          <div class="a-field"><label>Category</label>
+            <select id="editCat">
+              <option value="family">Family</option><option value="girl">Girl</option>
+              <option value="boy">Boy</option><option value="kids">Kids</option>
+              <option value="birthday">Birthday</option><option value="wedding">Wedding</option>
               <option value="invitation">Invitation</option>
             </select>
           </div>
         </div>
-        <div class="form-group">
-          <label>Image URL</label>
-          <input type="url" id="editUrl" />
-        </div>
-        <div class="form-group">
-          <label>Full Prompt</label>
-          <textarea id="editPrompt" rows="5"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Tags</label>
-          <input type="text" id="editTags" />
-        </div>
+        <div class="a-field"><label>Image URL</label><input type="url" id="editUrl" /></div>
+        <div class="a-field"><label>Full Prompt</label><textarea id="editPrompt" rows="5"></textarea></div>
+        <div class="a-field"><label>Tags</label><input type="text" id="editTags" /></div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-foot">
         <button class="btn-outline" id="cancelEdit">Cancel</button>
-        <button class="btn-primary" id="saveEdit"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+        <button class="btn-primary" id="saveEdit"><i class="fa-solid fa-floppy-disk"></i> Save</button>
       </div>
     </div>
   </div>
 
   <!-- Toast -->
-  <div class="toast" id="toast"><i class="fa-solid fa-check-circle"></i> <span id="toastMsg">Saved!</span></div>
+  <div class="toast-wrap" id="toastWrap">
+    <div class="toast-inner">
+      <div class="toast-icon"><i class="fa-solid fa-check"></i></div>
+      <span id="toastMsg">Saved!</span>
+    </div>
+  </div>
 
   <script src="js/data.js"></script>
   <script src="js/admin.js"></script>

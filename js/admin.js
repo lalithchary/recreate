@@ -1,321 +1,248 @@
 /**
  * admin.js — Admin Panel Logic
- * Change ADMIN_PASSWORD below to set your own password.
  */
-
 (function () {
   'use strict';
 
-  // ── CHANGE THIS PASSWORD ───────────────────────────────────────────────────
-  const ADMIN_PASSWORD = 'admin123';
-  // ──────────────────────────────────────────────────────────────────────────
+  // Password is stored separately — not exposed in README
+  const ADMIN_PASSWORD = 'Oggy@123';
+  const SESSION_KEY = 'pg_admin_ok';
 
-  const SESSION_KEY = 'promptGallery_admin_session';
-
-  // ── Init ────────────────────────────────────────────────────────────────────
   function init() {
     checkSession();
-    bindLoginEvents();
-    bindAdminEvents();
-    bindSidebarNav();
+    bindLogin();
+    bindPanel();
+    bindNav();
   }
 
-  // ── Session ──────────────────────────────────────────────────────────────────
+  // ── Session ────────────────────────────────────────────────────────────────
   function checkSession() {
-    if (sessionStorage.getItem(SESSION_KEY) === 'true') {
-      showAdminPanel();
-    }
+    if (sessionStorage.getItem(SESSION_KEY) === '1') showPanel();
   }
-
-  function showAdminPanel() {
-    document.getElementById('loginOverlay').style.display = 'none';
-    document.getElementById('adminWrap').style.display = 'flex';
-    updateSidebarStats();
-    renderManageGrid();
+  function showPanel() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminLayout').style.display = 'flex';
+    refreshStats();
+    renderManage();
   }
-
-  function hideAdminPanel() {
+  function hidePanel() {
     sessionStorage.removeItem(SESSION_KEY);
-    document.getElementById('loginOverlay').style.display = 'flex';
-    document.getElementById('adminWrap').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('adminLayout').style.display = 'none';
   }
 
-  // ── Login ────────────────────────────────────────────────────────────────────
-  function bindLoginEvents() {
-    const loginBtn = document.getElementById('loginBtn');
-    const passwordInput = document.getElementById('passwordInput');
-
-    loginBtn?.addEventListener('click', attemptLogin);
-    passwordInput?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') attemptLogin();
+  // ── Login ──────────────────────────────────────────────────────────────────
+  function bindLogin() {
+    document.getElementById('loginBtn')?.addEventListener('click', tryLogin);
+    document.getElementById('passwordInput')?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') tryLogin();
     });
-  }
-
-  function attemptLogin() {
-    const val = document.getElementById('passwordInput').value;
-    if (val === ADMIN_PASSWORD) {
-      sessionStorage.setItem(SESSION_KEY, 'true');
-      showAdminPanel();
-    } else {
-      const field = document.querySelector('.login-field');
-      field.style.borderColor = '#f87171';
-      field.style.boxShadow = '0 0 0 3px rgba(248,113,113,0.2)';
-      showToast('Incorrect password', 'error');
-      setTimeout(() => {
-        field.style.borderColor = '';
-        field.style.boxShadow = '';
-      }, 1500);
-    }
-  }
-
-  // ── Sidebar Nav ──────────────────────────────────────────────────────────────
-  function bindSidebarNav() {
-    document.querySelectorAll('.s-link[data-panel]').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const panel = link.dataset.panel;
-        document.querySelectorAll('.s-link[data-panel]').forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-        document.getElementById('panel-' + panel)?.classList.add('active');
-        if (panel === 'manage') renderManageGrid();
-      });
-    });
-
-    document.getElementById('logoutBtn')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      hideAdminPanel();
-    });
-  }
-
-  // ── Stats ────────────────────────────────────────────────────────────────────
-  function updateSidebarStats() {
-    const all = getAllImages();
-    const sTotal = document.getElementById('sTotal');
-    const sPublished = document.getElementById('sPublished');
-    if (sTotal) sTotal.textContent = all.length;
-    if (sPublished) sPublished.textContent = all.length;
-  }
-
-  // ── Add Form ─────────────────────────────────────────────────────────────────
-  function bindAdminEvents() {
-    // Char count
-    document.getElementById('imgPrompt')?.addEventListener('input', (e) => {
-      const count = document.getElementById('promptCharCount');
-      if (count) count.textContent = e.target.value.length + ' characters';
-    });
-
-    // Image preview
-    document.getElementById('previewBtn')?.addEventListener('click', () => {
-      const url = document.getElementById('imgUrl').value.trim();
-      const wrap = document.getElementById('imgPreviewWrap');
-      const preview = document.getElementById('imgPreview');
-      if (!url) { showToast('Enter an image URL first', 'error'); return; }
-      preview.src = url;
-      preview.onload = () => { wrap.style.display = 'block'; };
-      preview.onerror = () => { showToast('Could not load image. Check the URL.', 'error'); wrap.style.display = 'none'; };
-    });
-
-    // Clear form
-    document.getElementById('clearFormBtn')?.addEventListener('click', clearAddForm);
-
-    // Save image
-    document.getElementById('saveImageBtn')?.addEventListener('click', saveNewImage);
-
-    // Manage search + filter
-    document.getElementById('manageSearch')?.addEventListener('input', renderManageGrid);
-    document.getElementById('manageFilter')?.addEventListener('change', renderManageGrid);
-
-    // Export JSON
-    document.getElementById('exportBtn')?.addEventListener('click', exportJSON);
-
-    // Edit modal
-    document.getElementById('closeModal')?.addEventListener('click', closeEditModal);
-    document.getElementById('cancelEdit')?.addEventListener('click', closeEditModal);
-    document.getElementById('saveEdit')?.addEventListener('click', saveEdit);
-
-    // Close modal on overlay click
-    document.getElementById('editModal')?.addEventListener('click', (e) => {
-      if (e.target === document.getElementById('editModal')) closeEditModal();
-    });
-  }
-
-  // ── Save New Image ────────────────────────────────────────────────────────────
-  function saveNewImage() {
-    const title = document.getElementById('imgTitle').value.trim();
-    const category = document.getElementById('imgCategory').value;
-    const image = document.getElementById('imgUrl').value.trim();
-    const prompt = document.getElementById('imgPrompt').value.trim();
-    const tagsRaw = document.getElementById('imgTags').value.trim();
-
-    // Validate
-    if (!title || !category || !image || !prompt) {
-      showToast('Please fill in all required fields', 'error');
-      highlightEmpty();
-      return;
-    }
-
-    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
-
-    const img = addImage({ title, category, image, prompt, tags });
-    showToast('Image added to gallery!');
-    clearAddForm();
-    updateSidebarStats();
-  }
-
-  function highlightEmpty() {
-    ['imgTitle', 'imgCategory', 'imgUrl', 'imgPrompt'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el && !el.value.trim()) {
-        el.style.borderColor = '#f87171';
-        setTimeout(() => { el.style.borderColor = ''; }, 2000);
+    // Show / hide password
+    document.getElementById('toggleEye')?.addEventListener('click', () => {
+      const inp = document.getElementById('passwordInput');
+      const icon = document.querySelector('#toggleEye i');
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash';
+      } else {
+        inp.type = 'password';
+        icon.className = 'fa-solid fa-eye';
       }
     });
   }
-
-  function clearAddForm() {
-    ['imgTitle', 'imgUrl', 'imgPrompt', 'imgTags'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
-    });
-    document.getElementById('imgCategory').value = '';
-    document.getElementById('imgPreviewWrap').style.display = 'none';
-    document.getElementById('promptCharCount').textContent = '0 characters';
+  function tryLogin() {
+    const val = document.getElementById('passwordInput')?.value || '';
+    const wrap = document.getElementById('loginFieldWrap');
+    if (val === ADMIN_PASSWORD) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      showPanel();
+    } else {
+      wrap?.classList.add('error');
+      showToast('Incorrect password', 'err');
+      setTimeout(() => wrap?.classList.remove('error'), 1600);
+    }
   }
 
-  // ── Manage Grid ───────────────────────────────────────────────────────────────
-  function renderManageGrid() {
+  // ── Sidebar Navigation ─────────────────────────────────────────────────────
+  function bindNav() {
+    document.querySelectorAll('.aside-link[data-panel]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const p = link.dataset.panel;
+        document.querySelectorAll('.aside-link[data-panel]').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        document.querySelectorAll('.a-panel').forEach(el => el.classList.remove('active'));
+        document.getElementById('panel-' + p)?.classList.add('active');
+        if (p === 'manage') renderManage();
+      });
+    });
+    document.getElementById('logoutBtn')?.addEventListener('click', hidePanel);
+  }
+
+  // ── Stats ──────────────────────────────────────────────────────────────────
+  function refreshStats() {
+    const n = getAllImages().length;
+    const el = document.getElementById('sTotalCount');
+    if (el) el.textContent = n;
+  }
+
+  // ── Add Form ───────────────────────────────────────────────────────────────
+  function bindPanel() {
+    // Char counter
+    document.getElementById('imgPrompt')?.addEventListener('input', e => {
+      const el = document.getElementById('charCount');
+      if (el) el.textContent = e.target.value.length;
+    });
+    // Preview
+    document.getElementById('previewBtn')?.addEventListener('click', () => {
+      const url = document.getElementById('imgUrl')?.value.trim();
+      const box = document.getElementById('imgPreviewBox');
+      const img = document.getElementById('imgPreview');
+      if (!url) { showToast('Enter an image URL first', 'err'); return; }
+      img.src = url;
+      img.onload = () => { box.style.display = 'block'; };
+      img.onerror = () => { showToast('Cannot load image — check the URL', 'err'); box.style.display = 'none'; };
+    });
+    // Clear
+    document.getElementById('clearBtn')?.addEventListener('click', clearForm);
+    // Save
+    document.getElementById('saveBtn')?.addEventListener('click', saveImage);
+    // Manage filters
+    document.getElementById('mSearch')?.addEventListener('input', renderManage);
+    document.getElementById('mFilter')?.addEventListener('change', renderManage);
+    // Export
+    document.getElementById('exportBtn')?.addEventListener('click', exportData);
+    // Edit modal
+    document.getElementById('closeModal')?.addEventListener('click', closeModal);
+    document.getElementById('cancelEdit')?.addEventListener('click', closeModal);
+    document.getElementById('saveEdit')?.addEventListener('click', saveEdit);
+    document.getElementById('editModalBg')?.addEventListener('click', e => {
+      if (e.target === document.getElementById('editModalBg')) closeModal();
+    });
+  }
+
+  function saveImage() {
+    const title = v('imgTitle');
+    const category = v('imgCategory');
+    const image = v('imgUrl');
+    const prompt = v('imgPrompt');
+    const tagsRaw = v('imgTags');
+    if (!title || !category || !image || !prompt) {
+      showToast('Fill in all required fields', 'err');
+      ['imgTitle','imgCategory','imgUrl','imgPrompt'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.value.trim()) { el.style.borderColor = '#f87171'; setTimeout(() => el.style.borderColor = '', 2000); }
+      });
+      return;
+    }
+    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+    addImage({ title, category, image, prompt, tags });
+    showToast('Image added to gallery!');
+    clearForm();
+    refreshStats();
+  }
+
+  function clearForm() {
+    ['imgTitle','imgUrl','imgPrompt','imgTags'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    document.getElementById('imgCategory').value = '';
+    document.getElementById('imgPreviewBox').style.display = 'none';
+    document.getElementById('charCount').textContent = '0';
+  }
+
+  // ── Manage ─────────────────────────────────────────────────────────────────
+  function renderManage() {
     const grid = document.getElementById('manageGrid');
     const empty = document.getElementById('manageEmpty');
     if (!grid) return;
-
-    let images = getAllImages();
-    const q = document.getElementById('manageSearch')?.value.toLowerCase().trim();
-    const filter = document.getElementById('manageFilter')?.value;
-
-    if (filter && filter !== 'all') images = images.filter(i => i.category === filter);
-    if (q) images = images.filter(i => i.title.toLowerCase().includes(q) || i.prompt.toLowerCase().includes(q));
-
-    if (images.length === 0) {
-      grid.innerHTML = '';
-      empty.style.display = 'flex';
-      return;
-    }
+    let imgs = getAllImages();
+    const q = document.getElementById('mSearch')?.value.toLowerCase().trim();
+    const cat = document.getElementById('mFilter')?.value;
+    if (cat && cat !== 'all') imgs = imgs.filter(i => i.category === cat);
+    if (q) imgs = imgs.filter(i => i.title.toLowerCase().includes(q) || i.prompt.toLowerCase().includes(q));
+    if (!imgs.length) { grid.innerHTML = ''; empty.style.display = 'flex'; return; }
     empty.style.display = 'none';
-    grid.innerHTML = images.map(img => buildManageCard(img)).join('');
-
-    // Bind actions
-    grid.querySelectorAll('.btn-edit').forEach(btn => {
-      btn.addEventListener('click', () => openEditModal(btn.dataset.id));
-    });
-    grid.querySelectorAll('.btn-delete').forEach(btn => {
-      btn.addEventListener('click', () => confirmDelete(btn.dataset.id));
-    });
+    grid.innerHTML = imgs.map(buildMCard).join('');
+    grid.querySelectorAll('.m-edit').forEach(btn => btn.addEventListener('click', () => openModal(btn.dataset.id)));
+    grid.querySelectorAll('.m-del').forEach(btn => btn.addEventListener('click', () => deleteItem(btn.dataset.id)));
   }
 
-  function buildManageCard(img) {
-    return `
-      <div class="manage-card" data-id="${esc(img.id)}">
-        <div class="manage-card-img">
-          <img src="${esc(img.image)}" alt="${esc(img.title)}" loading="lazy"
-               onerror="this.src='https://via.placeholder.com/400x225?text=No+Image'" />
-        </div>
-        <div class="manage-card-body">
-          <div class="manage-card-title">${esc(img.title)}</div>
-          <span class="manage-card-cat">${esc(img.category)}</span>
-          <div class="manage-card-prompt">${esc(img.prompt)}</div>
-          <div class="manage-card-actions">
-            <button class="btn-edit" data-id="${esc(img.id)}"><i class="fa-solid fa-pen"></i> Edit</button>
-            <button class="btn-delete" data-id="${esc(img.id)}"><i class="fa-solid fa-trash"></i> Delete</button>
-          </div>
+  function buildMCard(img) {
+    return `<div class="m-card">
+      <div class="m-card-img"><img src="${esc(img.image)}" alt="${esc(img.title)}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=400&q=60'"/></div>
+      <div class="m-card-body">
+        <div class="m-card-title">${esc(img.title)}</div>
+        <span class="m-badge">${esc(img.category)}</span>
+        <div class="m-prompt">${esc(img.prompt)}</div>
+        <div class="m-actions">
+          <button class="m-edit" data-id="${esc(img.id)}"><i class="fa-solid fa-pen"></i> Edit</button>
+          <button class="m-del" data-id="${esc(img.id)}"><i class="fa-solid fa-trash"></i> Del</button>
         </div>
       </div>
-    `;
+    </div>`;
   }
 
-  // ── Edit Modal ────────────────────────────────────────────────────────────────
-  function openEditModal(id) {
-    const images = getAllImages();
-    const img = images.find(i => i.id === id);
+  // ── Edit Modal ─────────────────────────────────────────────────────────────
+  function openModal(id) {
+    const img = getAllImages().find(i => i.id === id);
     if (!img) return;
-
     document.getElementById('editId').value = img.id;
     document.getElementById('editTitle').value = img.title;
-    document.getElementById('editCategory').value = img.category;
+    document.getElementById('editCat').value = img.category;
     document.getElementById('editUrl').value = img.image;
     document.getElementById('editPrompt').value = img.prompt;
     document.getElementById('editTags').value = (img.tags || []).join(', ');
-
-    document.getElementById('editModal').style.display = 'flex';
+    document.getElementById('editModalBg').style.display = 'flex';
   }
-
-  function closeEditModal() {
-    document.getElementById('editModal').style.display = 'none';
-  }
-
+  function closeModal() { document.getElementById('editModalBg').style.display = 'none'; }
   function saveEdit() {
     const id = document.getElementById('editId').value;
-    const title = document.getElementById('editTitle').value.trim();
-    const category = document.getElementById('editCategory').value;
-    const image = document.getElementById('editUrl').value.trim();
-    const prompt = document.getElementById('editPrompt').value.trim();
-    const tagsRaw = document.getElementById('editTags').value.trim();
-    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
-
-    if (!title || !image || !prompt) { showToast('Required fields missing', 'error'); return; }
-
+    const title = v('editTitle'); const category = v('editCat');
+    const image = v('editUrl'); const prompt = v('editPrompt');
+    const tags = v('editTags').split(',').map(t => t.trim()).filter(Boolean);
+    if (!title || !image || !prompt) { showToast('Required fields missing', 'err'); return; }
     updateImage(id, { title, category, image, prompt, tags });
     showToast('Changes saved!');
-    closeEditModal();
-    renderManageGrid();
-    updateSidebarStats();
+    closeModal(); renderManage(); refreshStats();
   }
-
-  // ── Delete ────────────────────────────────────────────────────────────────────
-  function confirmDelete(id) {
+  function deleteItem(id) {
     if (!confirm('Delete this image? This cannot be undone.')) return;
     deleteImage(id);
     showToast('Image deleted');
-    renderManageGrid();
-    updateSidebarStats();
+    renderManage(); refreshStats();
   }
 
-  // ── Export JSON ───────────────────────────────────────────────────────────────
-  function exportJSON() {
-    const data = getAllImages();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+  // ── Export ─────────────────────────────────────────────────────────────────
+  function exportData() {
+    const blob = new Blob([JSON.stringify(getAllImages(), null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'promptgallery-export-' + Date.now() + '.json';
+    a.href = URL.createObjectURL(blob);
+    a.download = 'promptgallery-' + Date.now() + '.json';
     a.click();
-    URL.revokeObjectURL(url);
-    showToast('Exported successfully!');
+    URL.revokeObjectURL(a.href);
+    showToast('Exported!');
   }
 
-  // ── Toast ─────────────────────────────────────────────────────────────────────
-  function showToast(msg, type = 'success') {
-    const toast = document.getElementById('toast');
-    const toastMsg = document.getElementById('toastMsg');
-    if (!toast) return;
-    toastMsg.textContent = msg;
-    toast.style.background = type === 'error'
-      ? 'linear-gradient(135deg, #dc2626, #f87171)'
-      : 'linear-gradient(135deg, var(--accent), var(--accent2))';
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2800);
+  // ── Toast ──────────────────────────────────────────────────────────────────
+  function showToast(msg, type) {
+    const wrap = document.getElementById('toastWrap');
+    const msgEl = document.getElementById('toastMsg');
+    const inner = document.querySelector('.toast-inner');
+    if (!wrap) return;
+    msgEl.textContent = msg;
+    if (inner) inner.style.background = type === 'err'
+      ? 'linear-gradient(135deg,rgba(220,38,38,0.95),rgba(248,113,113,0.95))'
+      : 'linear-gradient(135deg,rgba(139,92,246,0.95),rgba(6,182,212,0.95))';
+    wrap.classList.add('show');
+    setTimeout(() => wrap.classList.remove('show'), 2800);
   }
 
-  // ── Utils ─────────────────────────────────────────────────────────────────────
-  function esc(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+  // ── Utils ──────────────────────────────────────────────────────────────────
+  function v(id) { return (document.getElementById(id)?.value || '').trim(); }
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  // ── Start ─────────────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', init);
-
 })();

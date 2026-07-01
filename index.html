@@ -4,88 +4,204 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PromptGallery — AI Image Prompts</title>
+  <meta name="description" content="Discover stunning AI-generated images and copy their prompts instantly. Browse by Family, Wedding, Birthday, and more." />
   <link rel="stylesheet" href="css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 
-  <!-- Animated Background -->
-  <div class="bg-grid"></div>
-  <div class="bg-glow glow-1"></div>
-  <div class="bg-glow glow-2"></div>
+  <!-- Ambient orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <canvas id="starCanvas"></canvas>
 
   <!-- Header -->
   <header class="header" id="header">
     <div class="header-inner">
-      <div class="logo">
-        <span class="logo-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-        <span class="logo-text">Prompt<span class="accent">Gallery</span></span>
-      </div>
+      <a href="#" class="logo">
+        <div class="logo-icon-wrap">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+        <span class="logo-text">Prompt<span class="gradient-text">Gallery</span></span>
+      </a>
       <nav class="nav" id="nav">
         <a href="#gallery" class="nav-link">Gallery</a>
         <a href="#categories" class="nav-link">Categories</a>
-        <a href="admin.html" class="nav-link admin-btn"><i class="fa-solid fa-lock"></i> Admin</a>
+        <a href="admin.html" class="nav-cta">
+          <i class="fa-solid fa-sparkles"></i> Manage
+        </a>
       </nav>
-      <button class="hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></button>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
 
   <!-- Hero -->
   <section class="hero">
+    <div class="hero-bg-text">PROMPTS</div>
     <div class="hero-content">
-      <div class="hero-badge">✦ AI Prompt Gallery</div>
-      <h1 class="hero-title">Discover & Copy<br/><span class="gradient-text">AI Image Prompts</span></h1>
-      <p class="hero-sub">Browse stunning AI-generated images with ready-to-use prompts. One click to copy, instantly create.</p>
-      <div class="hero-search">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" placeholder="Search prompts, categories..." autocomplete="off" />
+      <div class="hero-pill">
+        <span class="pill-dot"></span>
+        AI-Powered Prompt Gallery
+      </div>
+      <h1 class="hero-title">
+        Copy. Generate.<br/>
+        <span class="gradient-text typed-text" id="typedText">Create Magic.</span>
+      </h1>
+      <p class="hero-sub">
+        Browse curated AI-generated images across every occasion.<br/>
+        One click copies the full prompt — paste and create instantly.
+      </p>
+      <div class="hero-actions">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="Search prompts, styles, categories…" autocomplete="off" />
+          <kbd>⌘K</kbd>
+        </div>
+      </div>
+      <div class="hero-counters">
+        <div class="counter-item">
+          <div class="counter-num" id="totalImages">0</div>
+          <div class="counter-label">Images</div>
+        </div>
+        <div class="counter-divider"></div>
+        <div class="counter-item">
+          <div class="counter-num">8</div>
+          <div class="counter-label">Categories</div>
+        </div>
+        <div class="counter-divider"></div>
+        <div class="counter-item">
+          <div class="counter-num" id="totalCopied">0</div>
+          <div class="counter-label">Prompts Copied</div>
+        </div>
       </div>
     </div>
-    <div class="hero-stats">
-      <div class="stat"><span id="totalImages">0</span><small>Images</small></div>
-      <div class="stat"><span>8</span><small>Categories</small></div>
-      <div class="stat"><span id="totalCopied">0</span><small>Prompts Copied</small></div>
+    <div class="hero-float-cards">
+      <div class="float-card fc-1"><i class="fa-solid fa-house-chimney-heart"></i></div>
+      <div class="float-card fc-2"><i class="fa-solid fa-rings-wedding"></i></div>
+      <div class="float-card fc-3"><i class="fa-solid fa-cake-candles"></i></div>
+      <div class="float-card fc-4"><i class="fa-solid fa-child"></i></div>
     </div>
   </section>
 
-  <!-- Category Tabs -->
-  <section class="categories" id="categories">
+  <!-- Category Strip -->
+  <section class="cat-section" id="categories">
     <div class="container">
-      <div class="cat-tabs" id="catTabs">
-        <button class="cat-tab active" data-cat="all"><i class="fa-solid fa-border-all"></i> All</button>
-        <button class="cat-tab" data-cat="family"><i class="fa-solid fa-house-chimney-heart"></i> Family</button>
-        <button class="cat-tab" data-cat="girl"><i class="fa-solid fa-venus"></i> Girl</button>
-        <button class="cat-tab" data-cat="boy"><i class="fa-solid fa-mars"></i> Boy</button>
-        <button class="cat-tab" data-cat="kids"><i class="fa-solid fa-child"></i> Kids</button>
-        <button class="cat-tab" data-cat="birthday"><i class="fa-solid fa-cake-candles"></i> Birthday</button>
-        <button class="cat-tab" data-cat="wedding"><i class="fa-solid fa-rings-wedding"></i> Wedding</button>
-        <button class="cat-tab" data-cat="invitation"><i class="fa-solid fa-envelope-open-text"></i> Invitations</button>
+      <div class="cat-strip" id="catTabs">
+        <button class="cat-btn active" data-cat="all">
+          <span class="cat-icon"><i class="fa-solid fa-border-all"></i></span>
+          <span>All</span>
+        </button>
+        <button class="cat-btn" data-cat="family">
+          <span class="cat-icon"><i class="fa-solid fa-house-chimney-heart"></i></span>
+          <span>Family</span>
+        </button>
+        <button class="cat-btn" data-cat="girl">
+          <span class="cat-icon"><i class="fa-solid fa-venus"></i></span>
+          <span>Girl</span>
+        </button>
+        <button class="cat-btn" data-cat="boy">
+          <span class="cat-icon"><i class="fa-solid fa-mars"></i></span>
+          <span>Boy</span>
+        </button>
+        <button class="cat-btn" data-cat="kids">
+          <span class="cat-icon"><i class="fa-solid fa-child"></i></span>
+          <span>Kids</span>
+        </button>
+        <button class="cat-btn" data-cat="birthday">
+          <span class="cat-icon"><i class="fa-solid fa-cake-candles"></i></span>
+          <span>Birthday</span>
+        </button>
+        <button class="cat-btn" data-cat="wedding">
+          <span class="cat-icon"><i class="fa-solid fa-rings-wedding"></i></span>
+          <span>Wedding</span>
+        </button>
+        <button class="cat-btn" data-cat="invitation">
+          <span class="cat-icon"><i class="fa-solid fa-envelope-open-text"></i></span>
+          <span>Invitations</span>
+        </button>
       </div>
     </div>
   </section>
 
-  <!-- Gallery Grid -->
-  <main class="gallery-section" id="gallery">
+  <!-- Gallery -->
+  <main class="gallery-wrap" id="gallery">
     <div class="container">
-      <div class="gallery-grid" id="galleryGrid">
-        <!-- Cards injected by JS -->
+      <div class="gallery-header">
+        <div class="gallery-title-row">
+          <h2 class="section-title">Featured <span class="gradient-text">Gallery</span></h2>
+          <div class="view-toggle">
+            <button class="view-btn active" id="viewGrid" title="Grid view"><i class="fa-solid fa-grip"></i></button>
+            <button class="view-btn" id="viewList" title="List view"><i class="fa-solid fa-list"></i></button>
+          </div>
+        </div>
+        <p class="section-sub" id="galleryCount">Loading gallery…</p>
       </div>
+      <div class="gallery-grid" id="galleryGrid"></div>
       <div class="empty-state" id="emptyState" style="display:none">
-        <i class="fa-solid fa-image"></i>
-        <p>No images found. Try a different search or category.</p>
+        <div class="empty-icon"><i class="fa-solid fa-image"></i></div>
+        <h3>Nothing found</h3>
+        <p>Try a different search term or category.</p>
       </div>
     </div>
   </main>
 
-  <!-- Toast -->
-  <div class="toast" id="toast"><i class="fa-solid fa-check-circle"></i> <span id="toastMsg">Prompt copied!</span></div>
+  <!-- Toast notification -->
+  <div class="toast-wrap" id="toastWrap">
+    <div class="toast-inner">
+      <div class="toast-icon"><i class="fa-solid fa-check"></i></div>
+      <span id="toastMsg">Prompt copied!</span>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" style="display:none" role="dialog" aria-modal="true">
+    <button class="lb-close" id="lbClose"><i class="fa-solid fa-xmark"></i></button>
+    <div class="lb-inner">
+      <img id="lbImg" src="" alt="" />
+      <div class="lb-info">
+        <h3 id="lbTitle"></h3>
+        <div class="lb-prompt-box">
+          <p id="lbPrompt"></p>
+          <button class="lb-copy-btn" id="lbCopyBtn"><i class="fa-solid fa-copy"></i> Copy Full Prompt</button>
+        </div>
+        <div class="lb-tags" id="lbTags"></div>
+      </div>
+    </div>
+  </div>
+  <div class="lb-backdrop" id="lbBackdrop" style="display:none"></div>
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="footer-inner">
-      <span class="logo-text">Prompt<span class="accent">Gallery</span></span>
-      <p>Built with ✦ for AI creators. <a href="admin.html">Admin Panel</a></p>
+    <div class="footer-glow"></div>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="logo">
+            <div class="logo-icon-wrap sm"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <span class="logo-text">Prompt<span class="gradient-text">Gallery</span></span>
+          </div>
+          <p>A curated gallery of AI image prompts for every moment in life. Copy, paste, create.</p>
+        </div>
+        <div class="footer-cats">
+          <h4>Categories</h4>
+          <div class="footer-cat-links">
+            <a href="#" data-cat-link="family">Family</a>
+            <a href="#" data-cat-link="girl">Girl</a>
+            <a href="#" data-cat-link="boy">Boy</a>
+            <a href="#" data-cat-link="kids">Kids</a>
+            <a href="#" data-cat-link="birthday">Birthday</a>
+            <a href="#" data-cat-link="wedding">Wedding</a>
+            <a href="#" data-cat-link="invitation">Invitations</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 PromptGallery. Made with <span class="gradient-text">✦</span> for AI creators.</p>
+      </div>
     </div>
   </footer>
 
