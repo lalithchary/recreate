@@ -179,6 +179,18 @@
     });
   }
 
+  // ── Donate Modal ─────────────────────────────────────────────────────────────
+  function openDonate() {
+    document.getElementById('donateModal').style.display = 'flex';
+    document.getElementById('donateBackdrop').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDonate() {
+    document.getElementById('donateModal').style.display = 'none';
+    document.getElementById('donateBackdrop').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
   // ── Events ────────────────────────────────────────────────────────────────────
   function bindEvents() {
     // Category tabs
@@ -204,7 +216,7 @@
         e.preventDefault();
         document.getElementById('searchInput')?.focus();
       }
-      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'Escape') { closeLightbox(); closeDonate(); }
     });
 
     // View toggle
@@ -237,6 +249,30 @@
     // Lightbox close
     document.getElementById('lbClose')?.addEventListener('click', closeLightbox);
     document.getElementById('lbBackdrop')?.addEventListener('click', closeLightbox);
+
+    // Donate modal
+    document.getElementById('donateBtn')?.addEventListener('click', openDonate);
+    document.getElementById('footerDonateBtn')?.addEventListener('click', openDonate);
+    document.getElementById('donateClose')?.addEventListener('click', closeDonate);
+    document.getElementById('donateBackdrop')?.addEventListener('click', closeDonate);
+
+    // UPI ID copy
+    document.getElementById('upiCopyBtn')?.addEventListener('click', () => {
+      const upiId = document.getElementById('upiIdText')?.textContent || 'lalithtinku-2@oksbi';
+      const btn = document.getElementById('upiCopyBtn');
+      navigator.clipboard.writeText(upiId).then(() => {
+        btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+        btn.classList.add('copied');
+        showToast('UPI ID copied!');
+        setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-copy"></i>'; btn.classList.remove('copied'); }, 2000);
+      }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = upiId; ta.style.cssText = 'position:fixed;opacity:0';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('UPI ID copied!');
+      });
+    });
 
     // Footer category links
     document.querySelectorAll('[data-cat-link]').forEach(link => {

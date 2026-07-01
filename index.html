@@ -29,6 +29,9 @@
       <nav class="nav" id="nav">
         <a href="#gallery" class="nav-link">Gallery</a>
         <a href="#categories" class="nav-link">Categories</a>
+        <button class="nav-donate" id="donateBtn">
+          <i class="fa-solid fa-heart"></i> Donate
+        </button>
         <a href="admin.html" class="nav-cta">
           <i class="fa-solid fa-sparkles"></i> Manage
         </a>
@@ -201,9 +204,73 @@
       </div>
       <div class="footer-bottom">
         <p>© 2025 PromptGallery. Made with <span class="gradient-text">✦</span> for AI creators.</p>
+        <button class="footer-donate-btn" id="footerDonateBtn">
+          <i class="fa-solid fa-heart"></i> Support with UPI
+        </button>
       </div>
     </div>
   </footer>
+
+  <!-- Donate Modal -->
+  <div class="donate-backdrop" id="donateBackdrop" style="display:none"></div>
+  <div class="donate-modal" id="donateModal" style="display:none" role="dialog" aria-modal="true" aria-label="Donate via UPI">
+    <div class="donate-card">
+      <button class="donate-close" id="donateClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="donate-top">
+        <div class="donate-icon-wrap">
+          <i class="fa-solid fa-heart"></i>
+        </div>
+        <h2>Support PromptGallery</h2>
+        <p>Your contribution keeps this gallery free and growing. Every rupee helps! ♥</p>
+      </div>
+
+      <div class="donate-body">
+        <!-- QR Code -->
+        <div class="upi-qr-wrap">
+          <img
+            src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi%3A%2F%2Fpay%3Fpa%3Dlalithtinku-2%40oksbi%26pn%3DPromptGallery%26cu%3DINR"
+            alt="UPI QR Code for lalithtinku-2@oksbi"
+            class="upi-qr"
+            width="200" height="200"
+          />
+          <p class="qr-hint">Scan with any UPI app</p>
+        </div>
+
+        <!-- UPI ID row -->
+        <div class="upi-id-row">
+          <div class="upi-id-box">
+            <span class="upi-label">UPI ID</span>
+            <span class="upi-value" id="upiIdText">lalithtinku-2@oksbi</span>
+          </div>
+          <button class="upi-copy-btn" id="upiCopyBtn" title="Copy UPI ID">
+            <i class="fa-solid fa-copy"></i>
+          </button>
+        </div>
+
+        <!-- App shortcuts -->
+        <div class="upi-apps">
+          <p class="upi-apps-label">Open directly in</p>
+          <div class="upi-app-row">
+            <a href="upi://pay?pa=lalithtinku-2@oksbi&pn=PromptGallery&cu=INR" class="upi-app-btn gpay">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png" alt="GPay" />
+              <span>GPay</span>
+            </a>
+            <a href="upi://pay?pa=lalithtinku-2@oksbi&pn=PromptGallery&cu=INR" class="upi-app-btn phonepe">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png" alt="PhonePe" />
+              <span>PhonePe</span>
+            </a>
+            <a href="upi://pay?pa=lalithtinku-2@oksbi&pn=PromptGallery&cu=INR" class="upi-app-btn paytm">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Paytm_logo.png/320px-Paytm_logo.png" alt="Paytm" />
+              <span>Paytm</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <p class="donate-footer-note">100% goes to maintaining this gallery. Thank you! 🙏</p>
+    </div>
+  </div>
 
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
